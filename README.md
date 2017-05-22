@@ -1,9 +1,9 @@
 # semantic-ui-builder
-Semantic UI items and components + Mustache.
+Proof of concept: Build web ui with Vanilla JS based in Semantic UI CSS. 
 
 I would like to build web apps the same way you would build an iOS UI programatically.
 Objective is to build all Semantic UI CSS framework components and items, so you can build any UI programatically without touching HTML.
-I'm used to backbone, so final objective would be to implement this Semantic UI componenets, into Backbone views.
+I'm used to backbone, so final objective would be to implement this Semantic UI components, into Backbone views.
 
 Basic example:
 
