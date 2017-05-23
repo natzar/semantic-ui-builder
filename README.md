@@ -1,9 +1,6 @@
 # Semantic-ui Js builder
 Proof of concept: Build web ui with Vanilla JS based in Semantic UI CSS. 
 
-I want to explore building web apps the same way you would build an iOS UI or a desktop one programatically. Predefined ui elements.
-Objective is to build all Semantic UI CSS framework components and items, so you can build any UI programatically without touching HTML.
-I'm used to backbone, so final objective would be to implement this Semantic UI components, into Backbone views.
 
 Basic example:
 
@@ -17,7 +14,7 @@ Basic example:
 To-do:
 - Build typical tier2 ui elements: dialogs, wizards, modals, forms ...
 - Backbone Views to controle actions
-- Bootstrap Adapter
+- Bootstrap Adapter or abstraction layer to work with any CSS Framework
 		
 
 
