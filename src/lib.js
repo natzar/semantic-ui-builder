@@ -1,65 +1,107 @@
-/* Template Engine Quick Adapter
-====================================*/
-function TemplateEngineRender(template, data){		
-	return Mustache.render(template,data);	
-}
+var App = {	
+	views: [],	
+	init: function(){
+		this.views[0].show();
+	}
+	
+};
+
 
 /* Super Class 
 ====================================*/
 function Ui (){
 	this.version = 1;	
+	this.c = 0;
 	this.data = {};
-	this.template = '{{output}}';
+	
+	this.children = [];
+	this.id = null;
+
+	this.append = function (c){
+		this.children.push(c);		
+	}	
 }
+
 
 /* Every Html/Css item is an Element subclass
 ====================================*/
 function Element(opts){	
-	Ui.call(this);		
-	this.data = opts;	
-	this.append = function (c){
-		this.children.push(c);		
-	}	
-	this.prerender = function(){
-		return TemplateEngineRender(this.template,this.data);
+	var that = this;
+	Ui.call(that);		
+	this.data = opts;		
+	
+	
+	this.template = "<{{tag}} {{{attributes}}}>{{{innerHtml}}}</{{tag}}>";
+
+	this.compile = function(){		
+		var classes = "";
+		var attributesToString = "";
+
+		for (var x in this.data){			
+			attributesToString += " "+x+"='";
+			if (typeof this.data[x] == "object"){
+				attributesToString += this.data[x].join(" ")+"'" ;
+			}else{
+				attributesToString += this.data[x]+"'";
+			}
+		}
+		
+		this.data.attributes = attributesToString.toLowerCase();
+
+		//this.data.attributes = "id='"+this.id+"' class=\'"+classes.trim().toLowerCase()+"\'";
+		return Mustache.render(this.template,this.data);			
 	}
-	this.render = function (){
-		document.write(this.prerender());
+	
+	this.render = function(node){
+		console.log('render',node);
+		var that = this;
+		if (node.children.length > 0){
+			var output = "";
+			node.children.forEach(function(item){
+				output += that.render(item);
+			});
+			
+			node.data.innerHtml = output;
+		
+		} 
+			
+		return  this.compile.call(node);			
+		
 	}
+	
+	this.show = function(){
+		console.log('show',this.children);
+		this.data.innerHtml = this.render(this);
+		var html = this.compile();
+		document.write(html);
+	}
+	return this;
 }
 Element.prototype = Object.create(Ui.prototype);
 
+
 /* CSS Classes and Items 
 ====================================*/
-function Button (opts){
-	Element.call(this,opts);		
-	this.template = "<a class='ui button primary' href='{{link}}'>{{label}}</a>";
-}
-Button.prototype = Object.create(Element.prototype);
-
-function Header (opts){	
-	Element.call(this,opts);		
-	this.template ="<h1 class='ui header'>{{text}}{{#subheader}}<div class='sub header'>{{subheader}}</div>{{/subheader}}</h1>";
-}
-Header.prototype = Object.create(Element.prototype);
-
-function Container(opts){
-	Element.call(this,opts);
-	this.template = '<div class="ui container {{classes}}">{{{output}}}</div>';
-	this.children = [];		
-	this.render = function(){		
-		if (this.children.length > 0){
-			this.children.forEach(function(item){
-				if (item.children.length>0){
-					item.children.forEach(function(sitem){
-						this.data.output += sitem.prerender();
-					});
-				}
-				output += TemplateEngineRender(item.template, item.data);
-			});			
-		}		
-		document.write(TemplateEngineRender(this.template,this.data));
+function el(ui, opts){
+	if (typeof opts == 'undefined'){
+		opts = {};
+		
 	}
-}
+	if (!opts.class){
+		opts.class = [];
+	}
+	
+	opts.tag = 'div';
+	opts.class.push('ui');
+	opts.class.push(ui);
+	opts.innerHtml = opts.content;
+	Element.call(this,opts);
+	this.c++;
+	this.data.id = ui+'-'+this.c;
+	return this;
 
-Container.prototype = Object.create(Element.prototype);
+}
+el.prototype = Object.create(Element.prototype);
+
+
+
