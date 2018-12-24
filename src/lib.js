@@ -36,13 +36,15 @@ function Element(opts){
 	this.compile = function(){		
 		var classes = "";
 		var attributesToString = "";
-
-		for (var x in this.data){			
+		var ignore = ['content','tag','innerHtml'];
+		for (var x in this.data){	
+			if ( ignore.indexOf(x) < 0 ){		
 			attributesToString += " "+x+"='";
 			if (typeof this.data[x] == "object"){
 				attributesToString += this.data[x].join(" ")+"'" ;
 			}else{
 				attributesToString += this.data[x]+"'";
+			}
 			}
 		}
 		
@@ -53,7 +55,7 @@ function Element(opts){
 	}
 	
 	this.render = function(node){
-		console.log('render',node);
+		console.log('render',typeof node);
 		var that = this;
 		if (node.children.length > 0){
 			var output = "";
@@ -94,10 +96,12 @@ function el(ui, opts){
 	opts.tag = 'div';
 	opts.class.push('ui');
 	opts.class.push(ui);
+	opts.id = ui+'-';
+
 	opts.innerHtml = opts.content;
 	Element.call(this,opts);
 	this.c++;
-	this.data.id = ui+'-'+this.c;
+	
 	return this;
 
 }

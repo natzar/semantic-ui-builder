@@ -2,10 +2,10 @@
 
 var home = new el('View',{content: 'hello!!!!!'});
 
-container = new el('container');
-segment = new el('segment',{class: ['teal' ]});
-header = new el('header',{ content: 'hello!' });
-p =  el('p',{content: 'Lorem ipsum!'});
+var container = new el('container',{class: ['text','centered','center','align']});
+var segment = new el('segment',{class: ['teal' ]});
+var header = new el('header',{ content: 'hello!' });
+var p =  el('p',{content: 'Lorem ipsum!'});
 
 segment.append(header);
 segment.append(p);
