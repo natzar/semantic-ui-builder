@@ -1,7 +1,14 @@
 var App = {	
-	views: [],	
+	views: [],
+	current_view: null,	
 	init: function(){
-		this.views[0].show();
+		this.views[0].show.call(this.views[0]);
+	},
+	onResize: function(){
+
+	},
+	onScroll: function(){
+
 	}
 	
 };
@@ -29,21 +36,23 @@ function Element(opts){
 	var that = this;
 	Ui.call(that);		
 	this.data = opts;		
+	this.innerHtml = "";
 	
-	
+
 	this.template = "<{{tag}} {{{attributes}}}>{{{innerHtml}}}</{{tag}}>";
 
 	this.compile = function(){		
 		var classes = "";
+		
 		var attributesToString = "";
-		var ignore = ['content','tag','innerHtml'];
+		var ignore = ['items','content','tag','innerHtml','children','attributes'];
 		for (var x in this.data){	
 			if ( ignore.indexOf(x) < 0 ){		
-			attributesToString += " "+x+"='";
+			attributesToString +=' '+x+'="';
 			if (typeof this.data[x] == "object"){
-				attributesToString += this.data[x].join(" ")+"'" ;
+				attributesToString += this.data[x].join(" ")+'"' ;
 			}else{
-				attributesToString += this.data[x]+"'";
+				attributesToString += this.data[x]+'"';
 			}
 			}
 		}
@@ -54,8 +63,16 @@ function Element(opts){
 		return Mustache.render(this.template,this.data);			
 	}
 	
+	this.onReady = function(){
+
+	};
+	this.onHover = function(){
+
+	};
+
 	this.render = function(node){
-		console.log('render',typeof node);
+		console.log('render',node.template,node.data);
+		
 		var that = this;
 		if (node.children.length > 0){
 			var output = "";
@@ -63,7 +80,7 @@ function Element(opts){
 				output += that.render(item);
 			});
 			
-			node.data.innerHtml = output;
+			node.data.innerHtml += output;
 		
 		} 
 			
@@ -73,8 +90,8 @@ function Element(opts){
 	
 	this.show = function(){
 		console.log('show',this.children);
-		this.data.innerHtml = this.render(this);
-		var html = this.compile();
+		
+		var html = this.render(this);
 		document.write(html);
 	}
 	return this;
@@ -84,28 +101,42 @@ Element.prototype = Object.create(Ui.prototype);
 
 /* CSS Classes and Items 
 ====================================*/
-function el(ui, opts){
-	if (typeof opts == 'undefined'){
-		opts = {};
-		
-	}
-	if (!opts.class){
-		opts.class = [];
-	}
+function el(ui, _opts){
+	var opts = {
+		class: ['ui',ui],
+		content: '',
+		id: 'ID'+ui+'-',
+		tag: 'div',
+		innerHtml: ''
+	};
 	
-	opts.tag = 'div';
-	opts.class.push('ui');
-	opts.class.push(ui);
-	opts.id = ui+'-';
 
-	opts.innerHtml = opts.content;
-	Element.call(this,opts);
-	this.c++;
+	for (var op in _opts){ //extend options
+		if (op == "class"){
+			_opts['class'].forEach(function(op_class){
+				opts['class'].push(op_class);
+			});
+		}else{
+			opts[op] = _opts[op];
+		}
+	}
+
+	// dirty hack (fix)
+	opts.innerHtml = opts.content ||'';
 	
-	return this;
+	
+	if (typeof window[ui] != "undefined" && typeof window[ui].call != "undefined"){
+		window[ui].call(this,opts);
+
+	}else{
+		Element.call(this,opts);
+	}
+
+
+
 
 }
-el.prototype = Object.create(Element.prototype);
+
 
 
 
