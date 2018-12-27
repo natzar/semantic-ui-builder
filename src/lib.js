@@ -1,14 +1,42 @@
 var App = {	
 	views: [],
 	current_view: null,	
+	counter: 0,
+	events:{},
 	init: function(){
-		this.views[0].show.call(this.views[0]);
+		this.show(this.views[0]);
 	},
 	onResize: function(){
 
 	},
 	onScroll: function(){
 
+	},
+	getId: function(){
+		this.counter++;
+		return this.counter;
+	},
+	show: function(view){
+		var html = view.render();
+		document.write(html);
+		var that = this;
+		this.bindEvents(view);
+			
+	},
+	bindEvents: function(ui){
+		var that = this;
+		if (ui.children.length > 0) {
+			ui.children.forEach(function(child){
+				that.bindEvents(child);
+			});	
+		}
+
+		if (ui.events != null){
+			for (var event in ui.events){	
+			console.log("bindEvents",ui.data.id,event);		
+				document.getElementById(ui.data.id).addEventListener(event, ui.events[event]);
+			}
+		}	
 	}
 	
 };
@@ -18,99 +46,88 @@ var App = {
 ====================================*/
 function Ui (){
 	this.version = 1;	
-	this.c = 0;
-	this.data = {};
 	
 	this.children = [];
-	this.id = null;
+	this.template = "<{{tag}} {{{attributes}}}>{{{content}}}</{{tag}}>";
 
-	this.append = function (c){
-		this.children.push(c);		
-	}	
-}
-
-
-/* Every Html/Css item is an Element subclass
-====================================*/
-function Element(opts){	
-	var that = this;
-	Ui.call(that);		
-	this.data = opts;		
-	this.innerHtml = "";
 	
 
-	this.template = "<{{tag}} {{{attributes}}}>{{{innerHtml}}}</{{tag}}>";
+	this.append = function (kid){
+		App.events[this.id] = this.events;
+		this.children.push(kid);		
+	}
 
 	this.compile = function(){		
-		var classes = "";
-		
 		var attributesToString = "";
 		var ignore = ['items','content','tag','innerHtml','children','attributes'];
 		for (var x in this.data){	
 			if ( ignore.indexOf(x) < 0 ){		
-			attributesToString +=' '+x+'="';
-			if (typeof this.data[x] == "object"){
-				attributesToString += this.data[x].join(" ")+'"' ;
-			}else{
-				attributesToString += this.data[x]+'"';
-			}
+				attributesToString +=' '+x+'="';
+				if (typeof this.data[x] == "object"){
+					attributesToString += this.data[x].join(" ")+'"' ;
+				}else{
+					attributesToString += this.data[x]+'"';
+				}
 			}
 		}
-		
 		this.data.attributes = attributesToString.toLowerCase();
-
-		//this.data.attributes = "id='"+this.id+"' class=\'"+classes.trim().toLowerCase()+"\'";
 		return Mustache.render(this.template,this.data);			
 	}
 	
-	this.onReady = function(){
-
-	};
-	this.onHover = function(){
-
-	};
-
 	this.render = function(node){
-		console.log('render',node.template,node.data);
-		
+		if (node == null){
+			node = this;
+		}
 		var that = this;
 		if (node.children.length > 0){
 			var output = "";
 			node.children.forEach(function(item){
 				output += that.render(item);
 			});
-			
-			node.data.innerHtml += output;
-		
+			node.data.content += output;
 		} 
-			
 		return  this.compile.call(node);			
 		
 	}
 	
-	this.show = function(){
-		console.log('show',this.children);
-		
-		var html = this.render(this);
-		document.write(html);
-	}
-	return this;
+	
+
+	// 	document.getElementById("myBtn").addEventListener("click", displayDate);
+// var event = new Event('build');
+
+// // Listen for the event.
+// elem.addEventListener('build', function (e) { /* ... */ }, false);
+
+// // Dispatch the event.
+// elem.dispatchEvent(event);
+
+// var event = new CustomEvent('build', { detail: elem.dataset.time });
+// This will then allow you to access the additional data in the event listener:
+
+// function eventHandler(e) {
+//   console.log('The time is: ' + e.detail);
+// }
+
+
+
+
+
+
 }
-Element.prototype = Object.create(Ui.prototype);
 
 
-/* CSS Classes and Items 
+/* Factory
 ====================================*/
-function el(ui, _opts){
+function el(ui, _opts,events){
 	var opts = {
 		class: ['ui',ui],
 		content: '',
-		id: 'ID'+ui+'-',
+		id:'id-'+ui.toLowerCase()+'-'+App.getId(),
 		tag: 'div',
-		innerHtml: ''
+		
 	};
 	
-
+	// EXTEND Options
 	for (var op in _opts){ //extend options
 		if (op == "class"){
 			_opts['class'].forEach(function(op_class){
@@ -121,20 +138,14 @@ function el(ui, _opts){
 		}
 	}
 
-	// dirty hack (fix)
-	opts.innerHtml = opts.content ||'';
-	
+	this.data = opts;
+	this.events = events || null;
 	
 	if (typeof window[ui] != "undefined" && typeof window[ui].call != "undefined"){
-		window[ui].call(this,opts);
-
+		window[ui].call(this);
 	}else{
-		Element.call(this,opts);
+		Ui.call(this);
 	}
-
-
-
-
 }
 
 
