@@ -14,7 +14,11 @@ Basic example:
 	  container.render();
 	  
 With Events:
-	  var btn = new el('button',{class:['primary']},{click: function(){ alert("clicked"); });
+
+	  el({main class},{element's attributes}, {element's events});
+
+	  var list = new el('list',{class:['relaxed']});
+	  var btn = new el('button',{class:['primary']},{click: function(){ list.append({header: "Text header new item","description": "Whatever", icon:"sample.png" });
 	  
 - All elements can have 0 or more children.
 - If you want a sub header, append it to a header element.
@@ -24,10 +28,7 @@ With Events:
 
 
 To-do:
-- Build typical tier2 ui elements: dialogs, wizards, modals, forms ...
-- Backbone Views to controle actions
-- Bootstrap Adapter or abstraction layer to work with any CSS Framework
-		
+- Keep exploring whatever appeals you.
 
 
 ### Diary
