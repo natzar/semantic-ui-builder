@@ -32,8 +32,7 @@ var App = {
 		}
 
 		if (ui.events != null){
-			for (var event in ui.events){	
-			console.log("bindEvents",ui.data.id,event);		
+			for (var event in ui.events){				
 				document.getElementById(ui.data.id).addEventListener(event, ui.events[event]);
 			}
 		}	
@@ -49,8 +48,6 @@ function Ui (){
 	
 	this.children = [];
 	this.template = "<{{tag}} {{{attributes}}}>{{{content}}}</{{tag}}>";
-
-	
 
 	this.append = function (kid){
 		App.events[this.id] = this.events;
