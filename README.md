@@ -31,7 +31,7 @@ To-do:
 - Keep exploring whatever appeals you.
 
 
-### Diary
+### Log
 
 27 Dec - Imposible to work with customized elements with this approach. Thinking on using this as an IDE. Exactly like you would develop a iOS app with Xcode.
 
