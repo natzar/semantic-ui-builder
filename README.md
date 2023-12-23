@@ -30,16 +30,18 @@ With Events:
 To-do:
 - Keep exploring whatever appeals you.
 
+### Documentation
+In order to facilitate the understanding and use of the Semantic UI builder, detailed documentation on how to use and extend the system will be developed. This documentation will provide guidelines on element creation and manipulation, event handling, and best practices for constructing user interfaces with Semantic UI builder.
 
 ### Log
 
-27 Dec - Imposible to work with customized elements with this approach. Thinking on using this as an IDE. Exactly like you would develop a iOS app with Xcode.
+27 Dec - Impossible to work with customized elements with this approach. Thinking on using this as an IDE. Exactly like you would develop an iOS app with Xcode.
 
-23 Dec - Creating elements dinamically. Adding new items to a list. Attaching events.
+23 Dec - Creating elements dynamically. Adding new items to a list. Attaching events.
 
 23 Dec - started TO-DO app example
 
-23 De - Added App Super Class.
+23 Dec - Added App Super Class.
 
 23 Dec - Refactored. el() function does all the work. Removed Element Class.
 
